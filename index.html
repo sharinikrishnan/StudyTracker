@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyTracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>📚 StudyTracker</h1>
+
+    <form id="study-form">
+      <input type="date" id="date" required />
+      <input type="text" id="subject" placeholder="Subject" required />
+      <input type="number" id="hours" placeholder="Hours" required />
+      <button type="submit">Add Study Log</button>
+    </form>
+
+    <h2>Study History</h2>
+    <ul id="log-list"></ul>
+
+    <h2>Weekly Progress</h2>
+    <canvas id="studyChart" width="400" height="200"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

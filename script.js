@@ -1,57 +1,68 @@
 const form = document.getElementById("study-form");
 const logList = document.getElementById("log-list");
-const studyChart = document.getElementById("studyChart").getContext("2d");
+const chartCanvas = document.getElementById("studyChart");
 
-let logs = [];
+let logs = JSON.parse(localStorage.getItem("studyLogs")) || [];
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  const date = document.getElementById("date").value;
-  const subject = document.getElementById("subject").value;
-  const hours = parseFloat(document.getElementById("hours").value);
+function saveLogs() {
+  localStorage.setItem("studyLogs", JSON.stringify(logs));
+}
 
-  logs.push({ date, subject, hours });
-  displayLogs();
-  updateChart();
-  form.reset();
-});
-
-function displayLogs() {
+function renderLogs() {
   logList.innerHTML = "";
   logs.forEach((log, index) => {
     const li = document.createElement("li");
-    li.textContent = `${log.date}: ${log.subject} - ${log.hours} hours`;
+    li.textContent = `${log.date} – ${log.subject}: ${log.hours} hour(s)`;
     logList.appendChild(li);
   });
 }
 
 function updateChart() {
-  const weeklyTotals = {};
+  const dataByDate = {};
 
-  logs.forEach((log) => {
-    if (!weeklyTotals[log.subject]) {
-      weeklyTotals[log.subject] = 0;
-    }
-    weeklyTotals[log.subject] += log.hours;
+  logs.forEach(log => {
+    if (!dataByDate[log.date]) dataByDate[log.date] = 0;
+    dataByDate[log.date] += Number(log.hours);
   });
 
-  const chartData = {
-    labels: Object.keys(weeklyTotals),
-    datasets: [{
-      label: "Hours Studied",
-      data: Object.values(weeklyTotals),
-      backgroundColor: "rgba(75, 192, 192, 0.6)"
-    }]
-  };
+  const labels = Object.keys(dataByDate);
+  const data = Object.values(dataByDate);
 
-  new Chart(studyChart, {
+  if (window.studyChart) window.studyChart.destroy();
+
+  window.studyChart = new Chart(chartCanvas, {
     type: "bar",
-    data: chartData,
+    data: {
+      labels,
+      datasets: [{
+        label: "Study Hours",
+        data,
+        backgroundColor: "#4CAF50"
+      }]
+    },
     options: {
-      responsive: true,
       scales: {
         y: { beginAtZero: true }
       }
     }
   });
 }
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const date = document.getElementById("date").value;
+  const subject = document.getElementById("subject").value;
+  const hours = document.getElementById("hours").value;
+
+  if (date && subject && hours) {
+    logs.push({ date, subject, hours });
+    saveLogs();
+    renderLogs();
+    updateChart();
+    form.reset();
+  }
+});
+
+// On page load
+renderLogs();
+updateChart();

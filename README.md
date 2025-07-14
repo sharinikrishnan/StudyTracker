@@ -29,7 +29,6 @@ StudyTracker allows students to:
 I built this to:
 - Learn full-stack fundamentals
 - Build a professional GitHub portfolio
-- Prepare for CS transfer to FSU or UCF
 
 ---
 
